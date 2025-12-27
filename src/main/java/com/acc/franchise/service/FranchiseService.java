@@ -5,6 +5,7 @@ import com.acc.franchise.dto.FranchiseRequestDto;
 import com.acc.franchise.dto.FranchiseResponseDto;
 import com.acc.franchise.repository.FranchiseRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FranchiseService {
@@ -15,12 +16,22 @@ public class FranchiseService {
         this.repository = repository;
     }
 
+    @Transactional
     public FranchiseResponseDto create(FranchiseRequestDto request) {
-        // Map request DTO to entity
+        // Validar si ya existe franquicia con el mismo nombre
+        if (repository.existsByName(request.name())) {
+            throw new IllegalArgumentException(
+                "Franchise with name '" + request.name() + "' already exists"
+            );
+        }
+
+        // Map request DTO a entidad
         Franchise franchise = new Franchise(request.name());
-        // Persist entity
+
+        // Persistir entidad
         Franchise saved = repository.save(franchise);
-        // Map entity to response DTO
+
+        // Map entity a response DTO
         return new FranchiseResponseDto(saved.getId(), saved.getName());
     }
 }
