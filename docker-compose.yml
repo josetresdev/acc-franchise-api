@@ -1,9 +1,35 @@
+version: "3.9"
+
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: acc-franchise-postgres
+    environment:
+      POSTGRES_DB: acc_franchise
+      POSTGRES_USER: acc_user
+      POSTGRES_PASSWORD: acc_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
   acc-franchise-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: acc-franchise-api:0.1.0
-    build: .
     container_name: acc-franchise-api
     ports:
       - "8091:8091"
     environment:
       SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/acc_franchise
+      SPRING_DATASOURCE_USERNAME: acc_user
+      SPRING_DATASOURCE_PASSWORD: acc_password
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

@@ -2,6 +2,29 @@ spring:
   application:
     name: acc-franchise-api
 
+  profiles:
+    active: local
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/acc_franchise
+    username: acc_user
+    password: acc_password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8091
+
 logging:
   level:
     root: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
