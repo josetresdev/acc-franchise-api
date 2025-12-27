@@ -3,19 +3,19 @@ spring:
     name: acc-franchise-api
 
   profiles:
-    active: local
+    active: ${SPRING_PROFILES_ACTIVE:local}
 
   datasource:
-    url: jdbc:postgresql://postgres:5432/acc_franchise
-    username: acc_user
-    password: acc_password
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/acc_franchise}
+    username: ${SPRING_DATASOURCE_USERNAME:acc_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:acc_password}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
