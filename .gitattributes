@@ -1,0 +1,5 @@
+# Ensure Unix line endings for Maven wrapper script
+/mvnw text eol=lf
+
+# Ensure Windows line endings for command scripts
+*.cmd text eol=crlf
