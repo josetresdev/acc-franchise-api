@@ -12,6 +12,26 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: acc_franchise
+          POSTGRES_USER: acc_user
+          POSTGRES_PASSWORD: acc_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U acc_user -d acc_franchise"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/acc_franchise
+      SPRING_DATASOURCE_USERNAME: acc_user
+      SPRING_DATASOURCE_PASSWORD: acc_password
+      SPRING_PROFILES_ACTIVE: docker
 
     steps:
       - name: Checkout code
@@ -24,5 +44,12 @@ jobs:
           java-version: 17
           cache: maven
 
-      - name: Build with Maven
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5432 -U acc_user; do
+            echo "Waiting for postgres..."
+            sleep 5
+          done
+
+      - name: Build & Test with Maven
         run: mvn clean verify
