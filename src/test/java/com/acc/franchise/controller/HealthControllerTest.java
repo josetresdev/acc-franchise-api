@@ -11,27 +11,26 @@ import reactor.core.publisher.Mono;
 
 import static org.mockito.Mockito.when;
 
-@WebFluxTest(controllers = HealthController.class) // Solo carga HealthController
+@WebFluxTest(controllers = HealthController.class)
 class HealthControllerTest {
 
     @Autowired
     private WebTestClient webTestClient;
 
     @MockBean
-    private HealthService healthService; // Mock del servicio inyectado
+    private HealthService healthService;
 
     @Test
     void testHealthCheck() {
-        // Devuelve un Mono<HealthResponseDto> mockeado
         when(healthService.checkHealth())
-                .thenReturn(Mono.just(new HealthResponseDto("UP", "ACC Franchise API")));
+            .thenReturn(Mono.just(new HealthResponseDto("UP", "ACC Franchise API")));
 
         webTestClient.get()
-                .uri("/api/health")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.status").isEqualTo("UP")
-                .jsonPath("$.name").isEqualTo("ACC Franchise API");
+            .uri("/api/health")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath("$.status").isEqualTo("UP")
+            .jsonPath("$.service").isEqualTo("ACC Franchise API"); // Ajuste aquí
     }
 }
