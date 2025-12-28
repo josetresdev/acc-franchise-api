@@ -3,6 +3,7 @@ package com.acc.franchise.controller;
 import com.acc.franchise.dto.FranchiseRequestDto;
 import com.acc.franchise.dto.FranchiseResponseDto;
 import com.acc.franchise.service.FranchiseService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,7 +17,7 @@ public class FranchiseController {
     }
 
     @PostMapping
-    public FranchiseResponseDto create(@RequestBody FranchiseRequestDto request) {
+    public FranchiseResponseDto create(@RequestBody @Valid FranchiseRequestDto request) {
         return service.create(request);
     }
 }

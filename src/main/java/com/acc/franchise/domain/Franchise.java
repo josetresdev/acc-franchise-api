@@ -2,9 +2,10 @@ package com.acc.franchise.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.UuidGenerator;
+
 import java.util.UUID;
 
 @Entity
@@ -12,10 +13,16 @@ import java.util.UUID;
 public class Franchise {
 
     @Id
-    @GeneratedValue
+    @UuidGenerator
+    @Column(
+        name = "id",
+        columnDefinition = "BINARY(16)",
+        nullable = false,
+        updatable = false
+    )
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 150)
     private String name;
 
     protected Franchise() {

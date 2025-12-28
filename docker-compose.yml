@@ -1,17 +1,24 @@
-version: "3.9"
-
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: acc-franchise-postgres
+  mysql:
+    image: mysql:8.4
+    container_name: acc-franchise-mysql
     environment:
-      POSTGRES_DB: acc_franchise
-      POSTGRES_USER: acc_user
-      POSTGRES_PASSWORD: acc_password
+      MYSQL_DATABASE: acc_franchise
+      MYSQL_USER: acc_user
+      MYSQL_PASSWORD: acc_password
+      MYSQL_ROOT_PASSWORD: root_password
     ports:
-      - "5432:5432"
+      - "3307:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: unless-stopped
 
   acc-franchise-api:
@@ -24,12 +31,14 @@ services:
       - "8091:8091"
     environment:
       SPRING_PROFILES_ACTIVE: local
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/acc_franchise
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/acc_franchise?useSSL=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: acc_user
       SPRING_DATASOURCE_PASSWORD: acc_password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
     depends_on:
-      - postgres
+      mysql:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
-  postgres_data:
+  mysql_data:
