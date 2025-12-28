@@ -1,66 +1,127 @@
 # acc-franchise-api
 
-API REST desarrollada con Spring Boot para la gestión de franquicias, sucursales y productos.
+API REST desarrollada con **Spring Boot** para la gestión de
+franquicias, sucursales y productos.
 
-Este proyecto hace parte de una prueba técnica backend y está diseñado siguiendo principios de arquitectura limpia, separación de responsabilidades y buenas prácticas enterprise.
+Este proyecto hace parte de una **prueba técnica backend** y está
+diseñado siguiendo principios de **arquitectura limpia**, **separación
+de responsabilidades** y **buenas prácticas enterprise**, incluyendo
+Docker y pipelines CI/CD con GitHub Actions.
 
----
+------------------------------------------------------------------------
 
 ## Stack tecnológico
 
-- Java 17 (LTS)
-- Spring Boot 3.5.9
-- Maven 3.9.12
-- Spring Web (REST)
-- IntelliJ IDEA Community
+-   Java 17 (LTS)
+-   Spring Boot 3.x
+-   Maven 3.9.x
+-   Spring Web (REST)
+-   Spring Data JPA
+-   Hibernate
+-   MySQL 8
+-   Docker & Docker Compose
+-   GitHub Actions (CI / CD)
+-   IntelliJ IDEA Community
 
----
+------------------------------------------------------------------------
 
 ## Requisitos previos
 
 Antes de ejecutar el proyecto, asegúrate de tener instalado:
 
-- Java JDK 17
-- Maven 3.9.12
-- Git
-- IntelliJ IDEA (recomendado)
+-   Java JDK 17
+-   Maven 3.9.x
+-   Git
+-   Docker
+-   Docker Compose
 
 Verificar Java:
 
-```bash
+``` bash
 java -version
 ```
 
 Verificar Maven:
 
-```bash
+``` bash
 mvn -version
 ```
 
----
+Verificar Docker:
 
-## Instalación y ejecución local
+``` bash
+docker --version
+docker compose version
+```
+
+------------------------------------------------------------------------
+
+## Instalación y ejecución local (sin Docker)
 
 ### 1. Clonar el repositorio
 
-```bash
+``` bash
 git clone git@github.com:josetresdev/acc-franchise-api.git
 cd acc-franchise-api
 ```
 
 ### 2. Ejecutar la aplicación
 
-```bash
+``` bash
 mvn spring-boot:run
 ```
 
 La aplicación iniciará en:
 
-```
-http://localhost:8091
+    http://localhost:8091
+
+------------------------------------------------------------------------
+
+## Ejecución con Docker (recomendado)
+
+El proyecto incluye configuración completa para ejecutar la API junto
+con MySQL usando **Docker Compose**.
+
+### 1. Construir y levantar los servicios
+
+``` bash
+docker compose up -d --build
 ```
 
----
+Servicios levantados:
+
+-   API Spring Boot: http://localhost:8091
+-   MySQL: localhost:3307
+
+### 2. Detener los servicios
+
+``` bash
+docker compose down
+```
+
+### 3. Ver logs
+
+``` bash
+docker compose logs -f acc-franchise-api
+```
+
+------------------------------------------------------------------------
+
+## Configuración de Base de Datos
+
+### MySQL (Docker)
+
+-   Host: `localhost`
+-   Puerto: `3307`
+-   Base de datos: `acc_franchise`
+-   Usuario: `acc_user`
+-   Password: `acc_password`
+
+Conexión JDBC:
+
+    jdbc:mysql://localhost:3307/acc_franchise
+
+------------------------------------------------------------------------
 
 ## Endpoint disponible
 
@@ -69,90 +130,141 @@ http://localhost:8091
 Permite validar que la API se encuentra activa.
 
 **Request**
-```
-GET /api/health
-```
+
+    GET /api/health
 
 **Response**
-```json
+
+``` json
 {
   "status": "UP",
   "service": "ACC Franchise API"
 }
 ```
 
----
+------------------------------------------------------------------------
 
 ## Estructura del proyecto
 
-```
-src/main/java/com/acc/franchise
-│
-├── AccFranchiseApiApplication.java
-│
-├── controller
-│   └── HealthController.java
-│
-├── service
-│   └── HealthService.java
-│
-├── dto
-│   └── HealthResponseDto.java
-│
-├── exception
-└── config
-```
+    src/main/java/com/acc/franchise
+    │
+    ├── AccFranchiseApiApplication.java
+    │
+    ├── controller
+    │   └── HealthController.java
+    │
+    ├── service
+    │   └── HealthService.java
+    │
+    ├── domain
+    │   └── Franchise.java
+    │
+    ├── repository
+    │
+    ├── dto
+    │
+    ├── exception
+    └── config
 
----
+------------------------------------------------------------------------
 
 ## Principios aplicados
 
-- Separación de responsabilidades por capas
-- Inyección de dependencias por constructor
-- Principios SOLID
-- DTOs como contratos de comunicación
-- Controllers sin lógica de negocio
-- Servicios independientes de HTTP
+-   Separación de responsabilidades por capas
+-   Inyección de dependencias por constructor
+-   Principios SOLID
+-   Arquitectura orientada a dominio
+-   DTOs como contratos de comunicación
+-   Controllers sin lógica de negocio
+-   Servicios desacoplados de HTTP
 
----
+------------------------------------------------------------------------
+
+## CI -- Continuous Integration
+
+El proyecto utiliza **GitHub Actions** para validación automática.
+
+### Pipeline CI
+
+-   Se ejecuta en:
+    -   `develop`
+    -   `feature/*`
+-   Acciones:
+    -   Checkout del código
+    -   Setup Java 17
+    -   Build con Maven
+    -   Ejecución de tests
+
+Archivo:
+
+    .github/workflows/ci.yml
+
+------------------------------------------------------------------------
+
+## CD -- Continuous Deployment
+
+Pipeline de entrega continua para construcción de imágenes Docker.
+
+### Pipeline CD
+
+-   Se ejecuta en:
+    -   `staging`
+    -   `main`
+-   Acciones:
+    -   Build del JAR
+    -   Build de imagen Docker
+    -   Push a Docker Hub
+
+Requiere secrets configurados en GitHub:
+
+-   `DOCKERHUB_USERNAME`
+-   `DOCKERHUB_TOKEN`
+
+Archivo:
+
+    .github/workflows/cd.yml
+
+------------------------------------------------------------------------
 
 ## Flujo de trabajo Git
 
-El proyecto sigue Git Flow:
+El proyecto sigue **Git Flow**:
 
-- main: rama estable
-- develop: rama de integración
-- feature/*: desarrollo de funcionalidades
+-   `main`: rama estable
+-   `staging`: pre-producción
+-   `develop`: integración
+-   `feature/*`: desarrollo de funcionalidades
 
-Ejemplo de rama feature:
+Ejemplo:
 
-```
-feature/start-spring-boot
-```
+    feature/add-franchise-crud
 
----
+------------------------------------------------------------------------
 
 ## Estado actual del proyecto
 
-- Proyecto Spring Boot inicializado
-- Arquitectura base definida
-- Endpoint de health check funcional
+-   API Spring Boot funcional
+-   Dockerización completa
+-   CI/CD configurado con GitHub Actions
+-   Conexión MySQL operativa
+-   Entidad Franchise implementada
 
----
+------------------------------------------------------------------------
 
 ## Roadmap
 
-- Integración con JPA
-- Modelo de dominio Franchise, Branch y Product
-- Persistencia con base de datos
-- Endpoints CRUD
-- Dockerización
-- Despliegue en la nube
+-   CRUD completo de franquicias
+-   Gestión de sucursales y productos
+-   Validaciones avanzadas
+-   Manejo de errores global
+-   Seguridad con Spring Security
+-   Versionado de API
+-   Despliegue en la nube (AWS / OCI)
 
----
+------------------------------------------------------------------------
 
 ## Autor
 
-Jose Trespalacios B.
-josetrespalaciosbedoya.co 
-Backend / Full Stack Developer
+**Jose Trespalacios B.**\
+Backend / Full Stack Developer\
+https://josetrespalaciosbedoya.co
