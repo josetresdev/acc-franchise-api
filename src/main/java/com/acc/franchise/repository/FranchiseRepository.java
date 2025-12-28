@@ -11,5 +11,5 @@ public interface FranchiseRepository extends JpaRepository<Franchise, UUID> {
 
     Optional<Franchise> findByName(String name);
 
-    boolean existsByName(String name); // usado para validación de duplicados
+    boolean existsByName(String name);
 }

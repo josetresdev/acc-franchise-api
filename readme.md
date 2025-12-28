@@ -71,6 +71,37 @@ cd acc-franchise-api
 mvn spring-boot:run
 ```
 
+#### Configuración por variables de entorno
+
+La aplicación está diseñada para no hardcodear valores sensibles y
+soportar múltiples entornos (local, Docker, staging, producción).
+
+##### Archivo .env
+
+El archivo `.env` debe ubicarse en la **raíz del proyecto**, al mismo
+nivel que:
+
+    Dockerfile
+    docker-compose.yml
+    pom.xml
+    .env
+
+Ejemplo:
+
+``` env
+SPRING_PROFILES_ACTIVE=local
+
+SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/acc_franchise?useSSL=false&allowPublicKeyRetrieval=true
+SPRING_DATASOURCE_USERNAME=acc_user
+SPRING_DATASOURCE_PASSWORD=acc_password
+
+SERVER_PORT=8091
+```
+
+> El archivo `.env` no debe subirse al repositorio.
+
+------------------------------------------------------------------------
+
 La aplicación iniciará en:
 
     http://localhost:8091

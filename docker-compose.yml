@@ -1,12 +1,16 @@
+version: "3.9"
+
 services:
+
   mysql:
     image: mysql:8.4
     container_name: acc-franchise-mysql
+    restart: unless-stopped
     environment:
-      MYSQL_DATABASE: acc_franchise
-      MYSQL_USER: acc_user
-      MYSQL_PASSWORD: acc_password
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "3307:3306"
     volumes:
@@ -19,7 +23,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
 
   acc-franchise-api:
     build:
@@ -27,18 +30,14 @@ services:
       dockerfile: Dockerfile
     image: acc-franchise-api:0.1.0
     container_name: acc-franchise-api
-    ports:
-      - "8091:8091"
-    environment:
-      SPRING_PROFILES_ACTIVE: local
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/acc_franchise?useSSL=false&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: acc_user
-      SPRING_DATASOURCE_PASSWORD: acc_password
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+    restart: unless-stopped
     depends_on:
       mysql:
         condition: service_healthy
-    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8091:8091"
 
 volumes:
   mysql_data:

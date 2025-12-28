@@ -1,11 +1,7 @@
 package com.acc.franchise.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import org.hibernate.annotations.UuidGenerator;
-
+import jakarta.persistence.*;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -13,16 +9,10 @@ import java.util.UUID;
 public class Franchise {
 
     @Id
-    @UuidGenerator
-    @Column(
-        name = "id",
-        columnDefinition = "BINARY(16)",
-        nullable = false,
-        updatable = false
-    )
+    @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false, unique = true, length = 150)
+    @Column(nullable = false, unique = true, length = 120)
     private String name;
 
     protected Franchise() {
@@ -39,5 +29,22 @@ public class Franchise {
 
     public String getName() {
         return name;
+    }
+
+    public void rename(String newName) {
+        this.name = newName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Franchise)) return false;
+        Franchise that = (Franchise) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

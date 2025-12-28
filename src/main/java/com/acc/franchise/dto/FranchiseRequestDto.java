@@ -1,4 +1,13 @@
 package com.acc.franchise.dto;
 
-public record FranchiseRequestDto(String name) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record FranchiseRequestDto(
+
+    @NotBlank
+    @Size(min = 2, max = 120)
+    String name
+
+) {
 }
