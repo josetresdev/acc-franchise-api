@@ -1,6 +1,5 @@
 package com.acc.franchise.response;
 
-import org.springframework.data.domain.Page;
 import java.util.List;
 
 public class PageResponse<T> {
@@ -11,12 +10,14 @@ public class PageResponse<T> {
     private final long totalElements;
     private final int totalPages;
 
-    public PageResponse(Page<T> page) {
-        this.content = page.getContent();
-        this.page = page.getNumber();
-        this.size = page.getSize();
-        this.totalElements = page.getTotalElements();
-        this.totalPages = page.getTotalPages();
+    public PageResponse(List<T> content, int page, int size, long totalElements) {
+        this.content = content;
+        this.page = page;
+        this.size = size;
+        this.totalElements = totalElements;
+        this.totalPages = size > 0
+                ? (int) Math.ceil((double) totalElements / size)
+                : 0;
     }
 
     public List<T> getContent() {

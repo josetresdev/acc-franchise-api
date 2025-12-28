@@ -1,22 +1,23 @@
 package com.acc.franchise.domain;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity
-@Table(name = "franchises")
+@Table("franchises")
 public class Franchise {
 
     @Id
-    @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false, unique = true, length = 120)
+    @Column("name")
     private String name;
 
     protected Franchise() {
-        // Required by JPA
+        // Required by R2DBC
     }
 
     public Franchise(String name) {

@@ -1,15 +1,23 @@
 package com.acc.franchise.repository;
 
 import com.acc.franchise.domain.Franchise;
-import java.util.Optional;
+import org.springframework.data.r2dbc.repository.Query;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.util.UUID;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface FranchiseRepository extends JpaRepository<Franchise, UUID> {
+public interface FranchiseRepository
+        extends ReactiveCrudRepository<Franchise, UUID> {
 
-    Optional<Franchise> findByName(String name);
+    Mono<Boolean> existsByName(String name);
 
-    boolean existsByName(String name);
+    @Query("""
+        SELECT *
+        FROM franchises
+        ORDER BY name
+        LIMIT :limit OFFSET :offset
+    """)
+    Flux<Franchise> findAllPaged(int limit, long offset);
 }
