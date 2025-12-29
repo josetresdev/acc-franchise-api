@@ -16,7 +16,7 @@ spring:
       max-idle-time: ${DB_POOL_MAX_IDLE_TIME:30s}
       validation-query: SELECT 1
 
-  # 🚫 IMPORTANTE: Spring NO crea schema
+  # 🚫 IMPORTANTE: Spring NO crea schema automáticamente
   sql:
     init:
       mode: never
@@ -27,5 +27,7 @@ server:
 logging:
   level:
     root: INFO
-    org.springframework.r2dbc: DEBUG
-    io.r2dbc.mysql: DEBUG
+    org.springframework.r2dbc: DEBUG     # Logs de R2DBC
+    io.r2dbc.mysql: DEBUG                 # Logs de driver MySQL R2DBC
+    reactor.netty: DEBUG                  # Logs de Netty (conexiones TCP)
+    org.springframework.web: DEBUG        # Logs de WebFlux

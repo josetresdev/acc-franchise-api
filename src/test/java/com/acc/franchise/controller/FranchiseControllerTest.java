@@ -2,6 +2,7 @@ package com.acc.franchise.controller;
 
 import com.acc.franchise.dto.FranchiseRequestDto;
 import com.acc.franchise.dto.FranchiseResponseDto;
+import com.acc.franchise.response.ApiResponse;
 import com.acc.franchise.service.FranchiseService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
-
-import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -30,14 +29,8 @@ class FranchiseControllerTest {
         // given
         FranchiseRequestDto request = new FranchiseRequestDto("McDonalds");
 
-        UUID id = UUID.randomUUID();   // internal id (not exposed to client usually)
-        UUID uid = UUID.randomUUID();  // public uid
-
-        FranchiseResponseDto response = new FranchiseResponseDto(
-                id,
-                uid,
-                "McDonalds"
-        );
+        Long id = 1L; // ID numérico autoincrement
+        FranchiseResponseDto response = new FranchiseResponseDto(id, "McDonalds");
 
         when(franchiseService.create(any()))
                 .thenReturn(Mono.just(response));
@@ -54,8 +47,7 @@ class FranchiseControllerTest {
                 .expectBody()
                 .jsonPath("$.success").isEqualTo(true)
                 .jsonPath("$.message").isEqualTo("Franchise created successfully")
-                .jsonPath("$.data.id").exists()
-                .jsonPath("$.data.uid").exists()
+                .jsonPath("$.data.id").isEqualTo(id.intValue()) // WebTestClient interpreta números JSON como int
                 .jsonPath("$.data.name").isEqualTo("McDonalds");
     }
 }

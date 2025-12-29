@@ -3,39 +3,26 @@ package com.acc.franchise.repository;
 import com.acc.franchise.domain.Franchise;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.UUID;
-
-public interface FranchiseRepository
-        extends ReactiveCrudRepository<Franchise, UUID> {
+@Repository
+public interface FranchiseRepository extends ReactiveCrudRepository<Franchise, Long> {
 
     /**
-     * Checks if a franchise with the given name exists and is not soft deleted.
+     * Cuenta las franquicias activas con un nombre específico (para evitar duplicados)
      */
     @Query("""
-        SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+        SELECT COUNT(*) 
         FROM franchises
         WHERE name = :name
           AND deleted_at IS NULL
     """)
-    Mono<Boolean> existsByName(String name);
+    Mono<Integer> countByNameAndNotDeleted(String name);
 
     /**
-     * Finds a franchise by public UID.
-     */
-    @Query("""
-        SELECT *
-        FROM franchises
-        WHERE uid = :uid
-          AND deleted_at IS NULL
-        LIMIT 1
-    """)
-    Mono<Franchise> findByUid(UUID uid);
-
-    /**
-     * Returns a paginated list of franchises (soft deletes excluded).
+     * Obtiene un listado de franquicias activas paginadas
      */
     @Query("""
         SELECT *
@@ -45,4 +32,11 @@ public interface FranchiseRepository
         LIMIT :limit OFFSET :offset
     """)
     Flux<Franchise> findAllPaged(int limit, long offset);
+
+    /**
+     * Crear una franquicia (insert)
+     * ReactiveCrudRepository ya provee: save(Franchise)
+     * Ejemplo de uso en Service:
+     *    repository.save(Franchise.create("nombre"))
+     */
 }

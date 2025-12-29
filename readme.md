@@ -122,7 +122,7 @@ docker compose up -d --build
 Servicios levantados:
 
 -   API Spring Boot: http://localhost:8091
--   MySQL: localhost:3307
+-   MySQL: localhost:3306
 
 ### 2. Detener los servicios
 
@@ -143,14 +143,14 @@ docker compose logs -f acc-franchise-api
 ### MySQL (Docker)
 
 -   Host: `localhost`
--   Puerto: `3307`
+-   Puerto: `3306`
 -   Base de datos: `acc_franchise`
 -   Usuario: `acc_user`
 -   Password: `acc_password`
 
 Conexión JDBC:
 
-    jdbc:mysql://localhost:3307/acc_franchise
+    jdbc:mysql://localhost:3306/acc_franchise
 
 ------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 spring:
   r2dbc:
-    url: r2dbc:mysql://localhost:3307/acc_franchise
+    url: r2dbc:mysql://localhost:3306/acc_franchise
     username: acc_user
     password: acc_password
 

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class FranchiseService {
@@ -22,21 +21,21 @@ public class FranchiseService {
 
     /**
      * Creates a new franchise.
+     * Checks for duplicates before saving.
      */
     public Mono<FranchiseResponseDto> create(FranchiseRequestDto request) {
-
-        return repository.existsByName(request.name())
-                .flatMap(exists -> {
-                    if (exists) {
-                        return Mono.error(
-                                new DuplicateResourceException(
-                                        "Franchise with name '" + request.name() + "' already exists"
-                                )
-                        );
+        return repository.countByNameAndNotDeleted(request.name())
+                .flatMap(count -> {
+                    if (count > 0) {
+                        return Mono.error(new DuplicateResourceException(
+                                "Franchise with name '" + request.name() + "' already exists"
+                        ));
                     }
 
+                    // Create new franchise (ID auto-generated)
                     Franchise franchise = Franchise.create(request.name());
 
+                    // Save and map to response DTO
                     return repository.save(franchise)
                             .map(this::toResponse);
                 });
@@ -46,7 +45,6 @@ public class FranchiseService {
      * Returns a paginated list of franchises.
      */
     public Mono<List<FranchiseResponseDto>> findAll(int page, int size) {
-
         long offset = (long) page * size;
 
         return repository.findAllPaged(size, offset)
@@ -55,12 +53,11 @@ public class FranchiseService {
     }
 
     /**
-     * Maps domain entity to response DTO.
+     * Maps Franchise entity to DTO
      */
     private FranchiseResponseDto toResponse(Franchise franchise) {
         return new FranchiseResponseDto(
                 franchise.getId(),
-                franchise.getUid(),
                 franchise.getName()
         );
     }

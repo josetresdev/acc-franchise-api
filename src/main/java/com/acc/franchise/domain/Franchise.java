@@ -5,56 +5,46 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Objects;
-import java.util.UUID;
 
 @Table("franchises")
 public class Franchise {
 
     @Id
-    private UUID id;
-
-    @Column("uid")
-    private UUID uid;
+    @Column("id")
+    private Long id; // Autoincrement numérico en la base de datos
 
     @Column("name")
     private String name;
+
+    @Column("deleted_at")
+    private String deletedAt; // Opcional, para soft delete
 
     protected Franchise() {
         // Required by R2DBC
     }
 
-    private Franchise(UUID id, UUID uid, String name) {
+    private Franchise(Long id, String name) {
         this.id = id;
-        this.uid = uid;
         this.name = name;
     }
 
     /**
-     * Factory method to create a new Franchise.
+     * Factory method para crear una nueva franquicia.
+     * ID null => R2DBC hará INSERT y la base de datos generará autoincrement.
      */
     public static Franchise create(String name) {
-        return new Franchise(
-                UUID.randomUUID(), // internal id
-                UUID.randomUUID(), // public uid
-                name
-        );
+        return new Franchise(null, name);
     }
 
-    public UUID getId() {
-        return id;
-    }
+    // Getters y setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public UUID getUid() {
-        return uid;
-    }
+    public String getName() { return name; }
+    public void rename(String newName) { this.name = newName; }
 
-    public String getName() {
-        return name;
-    }
-
-    public void rename(String newName) {
-        this.name = newName;
-    }
+    public String getDeletedAt() { return deletedAt; }
+    public void setDeletedAt(String deletedAt) { this.deletedAt = deletedAt; }
 
     @Override
     public boolean equals(Object o) {
