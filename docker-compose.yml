@@ -1,6 +1,7 @@
 version: "3.9"
 
 services:
+
   mysql:
     image: mysql:8.0.44
     container_name: acc-franchise-mysql
@@ -35,7 +36,6 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      # Desactiva Reactor Debug Agent
       JAVA_TOOL_OPTIONS: "-Dreactor.tools.agent.enabled=false"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8091/actuator/health"]

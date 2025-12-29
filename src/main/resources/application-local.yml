@@ -1,10 +1,16 @@
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3307/acc_franchise?useSSL=false&allowPublicKeyRetrieval=true
+  r2dbc:
+    url: r2dbc:mysql://localhost:3307/acc_franchise
     username: acc_user
     password: acc_password
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+  # 🚫 Nunca crear/modificar tablas desde la app
+  sql:
+    init:
+      mode: never
+
+logging:
+  level:
+    root: INFO
+    org.springframework.r2dbc: DEBUG
+    io.r2dbc.mysql: DEBUG

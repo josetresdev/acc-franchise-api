@@ -30,10 +30,12 @@ class FranchiseControllerTest {
         // given
         FranchiseRequestDto request = new FranchiseRequestDto("McDonalds");
 
-        UUID franchiseId = UUID.randomUUID();
+        UUID id = UUID.randomUUID();   // internal id (not exposed to client usually)
+        UUID uid = UUID.randomUUID();  // public uid
 
         FranchiseResponseDto response = new FranchiseResponseDto(
-                franchiseId,
+                id,
+                uid,
                 "McDonalds"
         );
 
@@ -53,6 +55,7 @@ class FranchiseControllerTest {
                 .jsonPath("$.success").isEqualTo(true)
                 .jsonPath("$.message").isEqualTo("Franchise created successfully")
                 .jsonPath("$.data.id").exists()
+                .jsonPath("$.data.uid").exists()
                 .jsonPath("$.data.name").isEqualTo("McDonalds");
     }
 }

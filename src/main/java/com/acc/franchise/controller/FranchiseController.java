@@ -21,6 +21,9 @@ public class FranchiseController {
         this.service = service;
     }
 
+    /**
+     * Create a new franchise.
+     */
     @PostMapping
     public Mono<ApiResponse<FranchiseResponseDto>> create(
             @RequestBody @Valid FranchiseRequestDto request
@@ -34,6 +37,9 @@ public class FranchiseController {
                 );
     }
 
+    /**
+     * Get paginated list of franchises.
+     */
     @GetMapping
     public Mono<ApiResponse<PageResponse<FranchiseResponseDto>>> findAll(
             @RequestParam(defaultValue = "0") int page,
@@ -44,12 +50,16 @@ public class FranchiseController {
                 .map(ApiResponse::success);
     }
 
+    /**
+     * Builds a simple page response.
+     * Total elements is a placeholder until a COUNT query is added.
+     */
     private PageResponse<FranchiseResponseDto> buildPageResponse(
             List<FranchiseResponseDto> content,
             int page,
             int size
     ) {
-        long totalElements = content.size(); // placeholder intencional
+        long totalElements = content.size(); // intentional placeholder
 
         return new PageResponse<>(
                 content,

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class FranchiseService {
@@ -19,6 +20,9 @@ public class FranchiseService {
         this.repository = repository;
     }
 
+    /**
+     * Creates a new franchise.
+     */
     public Mono<FranchiseResponseDto> create(FranchiseRequestDto request) {
 
         return repository.existsByName(request.name())
@@ -31,29 +35,33 @@ public class FranchiseService {
                         );
                     }
 
-                    Franchise franchise = new Franchise(request.name());
+                    Franchise franchise = Franchise.create(request.name());
 
                     return repository.save(franchise)
-                            .map(saved ->
-                                    new FranchiseResponseDto(
-                                            saved.getId(),
-                                            saved.getName()
-                                    )
-                            );
+                            .map(this::toResponse);
                 });
     }
 
+    /**
+     * Returns a paginated list of franchises.
+     */
     public Mono<List<FranchiseResponseDto>> findAll(int page, int size) {
 
         long offset = (long) page * size;
 
         return repository.findAllPaged(size, offset)
-                .map(franchise ->
-                        new FranchiseResponseDto(
-                                franchise.getId(),
-                                franchise.getName()
-                        )
-                )
+                .map(this::toResponse)
                 .collectList();
+    }
+
+    /**
+     * Maps domain entity to response DTO.
+     */
+    private FranchiseResponseDto toResponse(Franchise franchise) {
+        return new FranchiseResponseDto(
+                franchise.getId(),
+                franchise.getUid(),
+                franchise.getName()
+        );
     }
 }

@@ -13,6 +13,9 @@ public class Franchise {
     @Id
     private UUID id;
 
+    @Column("uid")
+    private UUID uid;
+
     @Column("name")
     private String name;
 
@@ -20,12 +23,29 @@ public class Franchise {
         // Required by R2DBC
     }
 
-    public Franchise(String name) {
+    private Franchise(UUID id, UUID uid, String name) {
+        this.id = id;
+        this.uid = uid;
         this.name = name;
+    }
+
+    /**
+     * Factory method to create a new Franchise.
+     */
+    public static Franchise create(String name) {
+        return new Franchise(
+                UUID.randomUUID(), // internal id
+                UUID.randomUUID(), // public uid
+                name
+        );
     }
 
     public UUID getId() {
         return id;
+    }
+
+    public UUID getUid() {
+        return uid;
     }
 
     public String getName() {
