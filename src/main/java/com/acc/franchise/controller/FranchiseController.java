@@ -49,7 +49,7 @@ public class FranchiseController {
             int page,
             int size
     ) {
-        long totalElements = content.size(); // Placeholder (mejorable luego)
+        long totalElements = content.size(); // placeholder intencional
 
         return new PageResponse<>(
                 content,

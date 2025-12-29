@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AccFranchiseApiApplication {
 
     public static void main(String[] args) {
-        // Application entry point
         SpringApplication.run(AccFranchiseApiApplication.class, args);
     }
 }

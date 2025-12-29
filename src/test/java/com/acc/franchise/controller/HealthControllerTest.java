@@ -6,12 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 import static org.mockito.Mockito.when;
 
 @WebFluxTest(controllers = HealthController.class)
+@ActiveProfiles("test")
 class HealthControllerTest {
 
     @Autowired
@@ -21,16 +23,20 @@ class HealthControllerTest {
     private HealthService healthService;
 
     @Test
-    void testHealthCheck() {
+    void shouldReturnHealthStatusSuccessfully() {
+        // given
         when(healthService.checkHealth())
-            .thenReturn(Mono.just(new HealthResponseDto("UP", "ACC Franchise API")));
+                .thenReturn(Mono.just(
+                        new HealthResponseDto("UP", "ACC Franchise API")
+                ));
 
+        // when / then
         webTestClient.get()
-            .uri("/api/health")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody()
-            .jsonPath("$.status").isEqualTo("UP")
-            .jsonPath("$.service").isEqualTo("ACC Franchise API"); // Ajuste aquí
+                .uri("/api/health")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.status").isEqualTo("UP")
+                .jsonPath("$.service").isEqualTo("ACC Franchise API");
     }
 }
