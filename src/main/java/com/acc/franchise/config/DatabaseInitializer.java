@@ -30,7 +30,7 @@ public class DatabaseInitializer {
                 """).then(),
 
                 client.sql("""
-                    CREATE INDEX IF NOT EXISTS idx_franchises_deleted_at
+                    CREATE INDEX idx_franchises_deleted_at
                     ON franchises (deleted_at);
                 """).then(),
 
@@ -52,12 +52,12 @@ public class DatabaseInitializer {
                 """).then(),
 
                 client.sql("""
-                    CREATE INDEX IF NOT EXISTS idx_franchise_branches_franchise_id
+                    CREATE INDEX idx_franchise_branches_franchise_id
                     ON franchise_branches (franchise_id);
                 """).then(),
 
                 client.sql("""
-                    CREATE INDEX IF NOT EXISTS idx_franchise_branches_deleted_at
+                    CREATE INDEX idx_franchise_branches_deleted_at
                     ON franchise_branches (deleted_at);
                 """).then(),
 
@@ -81,17 +81,17 @@ public class DatabaseInitializer {
                 """).then(),
 
                 client.sql("""
-                    CREATE INDEX IF NOT EXISTS idx_products_franchise_branch_id
+                    CREATE INDEX idx_products_franchise_branch_id
                     ON products (franchise_branch_id);
                 """).then(),
 
                 client.sql("""
-                    CREATE INDEX IF NOT EXISTS idx_products_stock
+                    CREATE INDEX idx_products_stock
                     ON products (stock);
                 """).then(),
 
                 client.sql("""
-                    CREATE INDEX IF NOT EXISTS idx_products_deleted_at
+                    CREATE INDEX idx_products_deleted_at
                     ON products (deleted_at);
                 """).then()
             ).subscribe();
