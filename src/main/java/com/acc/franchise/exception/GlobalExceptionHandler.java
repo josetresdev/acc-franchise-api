@@ -18,9 +18,7 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateResourceException.class)
-    public Mono<ResponseEntity<ApiResponse<Void>>> handleDuplicate(
-            DuplicateResourceException ex
-    ) {
+    public Mono<ResponseEntity<ApiResponse<Void>>> handleDuplicate(DuplicateResourceException ex) {
         return Mono.just(
                 ResponseEntity
                         .status(HttpStatus.CONFLICT)
@@ -30,9 +28,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public Mono<ResponseEntity<ApiResponse<Void>>> handleNotFound(
-            ResourceNotFoundException ex
-    ) {
+    public Mono<ResponseEntity<ApiResponse<Void>>> handleNotFound(ResourceNotFoundException ex) {
         return Mono.just(
                 ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
@@ -42,9 +38,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(WebExchangeBindException.class)
-    public Mono<ResponseEntity<ApiResponse<Void>>> handleValidation(
-            WebExchangeBindException ex
-    ) {
+    public Mono<ResponseEntity<ApiResponse<Void>>> handleValidation(WebExchangeBindException ex) {
         String message = ex.getFieldErrors()
                 .stream()
                 .map(err -> err.getField() + " " + err.getDefaultMessage())
@@ -59,21 +53,24 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public Mono<ResponseEntity<ApiResponse<Void>>> handleConstraint(
-            ConstraintViolationException ex
-    ) {
+    public Mono<ResponseEntity<ApiResponse<Void>>> handleConstraint(ConstraintViolationException ex) {
+        String message = ex.getConstraintViolations()
+                .stream()
+                .map(v -> v.getPropertyPath() + " " + v.getMessage())
+                .collect(Collectors.joining(", "));
         return Mono.just(
                 ResponseEntity
                         .badRequest()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(ApiResponse.error(ex.getMessage()))
+                        .body(ApiResponse.error(message.isEmpty() ? "Constraint violation" : message))
         );
     }
 
     @ExceptionHandler(Exception.class)
-    public Mono<ResponseEntity<ApiResponse<Void>>> handleGeneric(
-            Exception ex
-    ) {
+    public Mono<ResponseEntity<ApiResponse<Void>>> handleGeneric(Exception ex) {
+        // Log interno para depuración
+        ex.printStackTrace();
+
         return Mono.just(
                 ResponseEntity
                         .status(HttpStatus.INTERNAL_SERVER_ERROR)

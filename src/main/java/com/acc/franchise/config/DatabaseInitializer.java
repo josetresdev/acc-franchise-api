@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.r2dbc.core.DatabaseClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Configuration
 public class DatabaseInitializer {
@@ -29,10 +30,10 @@ public class DatabaseInitializer {
                     ) ENGINE=InnoDB;
                 """).then(),
 
-                client.sql("""
-                    CREATE INDEX idx_franchises_deleted_at
-                    ON franchises (deleted_at);
-                """).then(),
+                // Índice franquicias
+                client.sql("CREATE INDEX idx_franchises_deleted_at ON franchises (deleted_at);")
+                      .then()
+                      .onErrorResume(e -> Mono.empty()), // aquí el Mono ya permite manejar el error
 
                 // Tabla de sucursales
                 client.sql("""
@@ -51,15 +52,12 @@ public class DatabaseInitializer {
                     ) ENGINE=InnoDB;
                 """).then(),
 
-                client.sql("""
-                    CREATE INDEX idx_franchise_branches_franchise_id
-                    ON franchise_branches (franchise_id);
-                """).then(),
+                // Índices sucursales
+                client.sql("CREATE INDEX idx_franchise_branches_franchise_id ON franchise_branches (franchise_id);")
+                      .then().onErrorResume(e -> Mono.empty()),
 
-                client.sql("""
-                    CREATE INDEX idx_franchise_branches_deleted_at
-                    ON franchise_branches (deleted_at);
-                """).then(),
+                client.sql("CREATE INDEX idx_franchise_branches_deleted_at ON franchise_branches (deleted_at);")
+                      .then().onErrorResume(e -> Mono.empty()),
 
                 // Tabla de productos
                 client.sql("""
@@ -80,20 +78,15 @@ public class DatabaseInitializer {
                     ) ENGINE=InnoDB;
                 """).then(),
 
-                client.sql("""
-                    CREATE INDEX idx_products_franchise_branch_id
-                    ON products (franchise_branch_id);
-                """).then(),
+                // Índices productos
+                client.sql("CREATE INDEX idx_products_franchise_branch_id ON products (franchise_branch_id);")
+                      .then().onErrorResume(e -> Mono.empty()),
 
-                client.sql("""
-                    CREATE INDEX idx_products_stock
-                    ON products (stock);
-                """).then(),
+                client.sql("CREATE INDEX idx_products_stock ON products (stock);")
+                      .then().onErrorResume(e -> Mono.empty()),
 
-                client.sql("""
-                    CREATE INDEX idx_products_deleted_at
-                    ON products (deleted_at);
-                """).then()
+                client.sql("CREATE INDEX idx_products_deleted_at ON products (deleted_at);")
+                      .then().onErrorResume(e -> Mono.empty())
             ).subscribe();
         };
     }
