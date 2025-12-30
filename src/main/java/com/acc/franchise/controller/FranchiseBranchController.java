@@ -30,11 +30,11 @@ public class FranchiseBranchController {
 
     @GetMapping
     public Mono<ApiResponse<PageResponse<FranchiseBranchResponseDto>>> findAll(
-            @RequestParam(name = "franchiseId", required = true) String franchiseId,
+            @RequestParam(name = "franchiseId") Long franchiseId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        if (franchiseId == null || franchiseId.isBlank()) {
+        if (franchiseId == null) {
             return Mono.just(ApiResponse.error("Parameter 'franchiseId' is required"));
         }
 

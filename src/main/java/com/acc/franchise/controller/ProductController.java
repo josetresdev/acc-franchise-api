@@ -22,16 +22,18 @@ public class ProductController {
     @PostMapping
     public Mono<ApiResponse<ProductResponseDto>> create(@RequestBody @Valid ProductRequestDto request) {
         return service.create(request)
-                .map(p -> ApiResponse.success("Product created successfully", p));
+                .map(p -> ApiResponse.success("Product created successfully", p))
+                .onErrorResume(ex -> Mono.just(ApiResponse.error(ex.getMessage())));
     }
 
     @GetMapping
     public Mono<ApiResponse<PageResponse<ProductResponseDto>>> findAll(
-            @RequestParam String branchId,
+            @RequestParam Long branchId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         return service.findAll(branchId, page, size)
-                .map(ApiResponse::success);
+                .map(ApiResponse::success)
+                .onErrorResume(ex -> Mono.just(ApiResponse.error(ex.getMessage())));
     }
 }

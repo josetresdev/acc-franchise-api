@@ -27,11 +27,11 @@ class FranchiseBranchControllerTest {
     @Test
     void shouldCreateBranchSuccessfully() {
         // given
-        FranchiseBranchRequestDto request = new FranchiseBranchRequestDto("franchise-uuid-1234", "Branch A");
+        Long franchiseId = 123L;
+        FranchiseBranchRequestDto request = new FranchiseBranchRequestDto("Branch A", franchiseId);
 
-        String id = "branch-id-001"; 
-        String uid = "branch-uid-001";
-        FranchiseBranchResponseDto response = new FranchiseBranchResponseDto(id, uid, "franchise-uuid-1234", "Branch A");
+        Long id = 1L;
+        FranchiseBranchResponseDto response = new FranchiseBranchResponseDto(id, franchiseId, "Branch A");
 
         when(branchService.create(any()))
                 .thenReturn(Mono.just(response));
@@ -48,9 +48,8 @@ class FranchiseBranchControllerTest {
                 .expectBody()
                 .jsonPath("$.success").isEqualTo(true)
                 .jsonPath("$.message").isEqualTo("Branch created successfully")
-                .jsonPath("$.data.id").isEqualTo(id)
-                .jsonPath("$.data.uid").isEqualTo(uid)
-                .jsonPath("$.data.franchiseId").isEqualTo("franchise-uuid-1234")
+                .jsonPath("$.data.id").isEqualTo(id.intValue())
+                .jsonPath("$.data.franchiseId").isEqualTo(franchiseId.intValue())
                 .jsonPath("$.data.name").isEqualTo("Branch A");
     }
 }

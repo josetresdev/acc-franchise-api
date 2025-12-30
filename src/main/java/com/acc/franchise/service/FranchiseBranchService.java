@@ -27,15 +27,16 @@ public class FranchiseBranchService {
                                 "Branch with name '" + request.name() + "' already exists in this franchise"
                         ));
                     }
-                    FranchiseBranch branch = FranchiseBranch.create(request.franchiseId(), request.name());
+                    // Create branch without manually setting ID; DB handles auto-increment
+                    FranchiseBranch branch = new FranchiseBranch(request.franchiseId(), request.name());
                     return repository.save(branch)
                             .map(this::toResponse);
                 });
     }
 
     // Get paginated branches by franchiseId
-    public Mono<PageResponse<FranchiseBranchResponseDto>> findAll(String franchiseId, int page, int size) {
-        if (franchiseId == null || franchiseId.isBlank()) {
+    public Mono<PageResponse<FranchiseBranchResponseDto>> findAll(Long franchiseId, int page, int size) {
+        if (franchiseId == null) {
             return Mono.error(new IllegalArgumentException("franchiseId is required"));
         }
 
@@ -48,7 +49,8 @@ public class FranchiseBranchService {
                 .map(this::toResponse)
                 .collectList()
                 .zipWith(totalCount, (list, total) -> new PageResponse<>(list, page, size, total))
-                .onErrorResume(ex -> Mono.error(new RuntimeException("Failed to fetch branches: " + ex.getMessage(), ex)));
+                .onErrorResume(ex -> Mono.error(new RuntimeException(
+                        "Failed to fetch branches: " + ex.getMessage(), ex)));
     }
 
     // Map domain to DTO
@@ -56,7 +58,6 @@ public class FranchiseBranchService {
         if (branch == null) return null;
         return new FranchiseBranchResponseDto(
                 branch.getId(),
-                branch.getUid(),
                 branch.getFranchiseId(),
                 branch.getName()
         );
