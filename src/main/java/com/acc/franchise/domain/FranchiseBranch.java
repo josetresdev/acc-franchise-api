@@ -28,7 +28,7 @@ public class FranchiseBranch {
     @Column("deleted_at")
     private LocalDateTime deletedAt;
 
-    public FranchiseBranch() {} // required by R2DBC
+    public FranchiseBranch() {}
 
     public FranchiseBranch(Long franchiseId, String name) {
         this.franchiseId = franchiseId;
