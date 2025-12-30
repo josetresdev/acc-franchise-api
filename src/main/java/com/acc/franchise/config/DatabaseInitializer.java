@@ -11,13 +11,21 @@ import reactor.core.publisher.Mono;
 @Configuration
 public class DatabaseInitializer {
 
+    /**
+     * Initializes the database schema at application startup.
+     * Creates tables for franchises, franchise branches, and products, along with necessary indexes.
+     * Uses reactive DatabaseClient to execute SQL statements and handles errors gracefully.
+     *
+     * @param connectionFactory R2DBC ConnectionFactory
+     * @return CommandLineRunner to execute on application startup
+     */
     @Bean
     public CommandLineRunner initializeDatabase(ConnectionFactory connectionFactory) {
         return args -> {
             DatabaseClient client = DatabaseClient.create(connectionFactory);
 
             Flux.concat(
-                // Tabla de franquicias
+                // ===================== Franchises table =====================
                 client.sql("""
                     CREATE TABLE IF NOT EXISTS franchises (
                         id BIGINT NOT NULL AUTO_INCREMENT,
@@ -30,12 +38,12 @@ public class DatabaseInitializer {
                     ) ENGINE=InnoDB;
                 """).then(),
 
-                // Índice franquicias
+                // Index for soft-deleted franchises
                 client.sql("CREATE INDEX idx_franchises_deleted_at ON franchises (deleted_at);")
                       .then()
-                      .onErrorResume(e -> Mono.empty()), // aquí el Mono ya permite manejar el error
+                      .onErrorResume(e -> Mono.empty()), // ignore error if index exists
 
-                // Tabla de sucursales
+                // ===================== Franchise branches table =====================
                 client.sql("""
                     CREATE TABLE IF NOT EXISTS franchise_branches (
                         id BIGINT NOT NULL AUTO_INCREMENT,
@@ -52,14 +60,15 @@ public class DatabaseInitializer {
                     ) ENGINE=InnoDB;
                 """).then(),
 
-                // Índices sucursales
+                // Index for franchise branches by franchise ID
                 client.sql("CREATE INDEX idx_franchise_branches_franchise_id ON franchise_branches (franchise_id);")
                       .then().onErrorResume(e -> Mono.empty()),
 
+                // Index for soft-deleted branches
                 client.sql("CREATE INDEX idx_franchise_branches_deleted_at ON franchise_branches (deleted_at);")
                       .then().onErrorResume(e -> Mono.empty()),
 
-                // Tabla de productos
+                // ===================== Products table =====================
                 client.sql("""
                     CREATE TABLE IF NOT EXISTS products (
                         id BIGINT NOT NULL AUTO_INCREMENT,
@@ -78,16 +87,18 @@ public class DatabaseInitializer {
                     ) ENGINE=InnoDB;
                 """).then(),
 
-                // Índices productos
+                // Index for products by branch ID
                 client.sql("CREATE INDEX idx_products_franchise_branch_id ON products (franchise_branch_id);")
                       .then().onErrorResume(e -> Mono.empty()),
 
+                // Index for products by stock
                 client.sql("CREATE INDEX idx_products_stock ON products (stock);")
                       .then().onErrorResume(e -> Mono.empty()),
 
+                // Index for soft-deleted products
                 client.sql("CREATE INDEX idx_products_deleted_at ON products (deleted_at);")
                       .then().onErrorResume(e -> Mono.empty())
-            ).subscribe();
+            ).subscribe(); // Execute all statements reactively
         };
     }
 }

@@ -10,24 +10,36 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/products") // Base URL de todos los endpoints
-public class ProductController {
+@RequestMapping("/api/products")
+public class ProductControllerTest {
 
     private final ProductService service;
 
-    // Inyección de ProductService mediante constructor
-    public ProductController(ProductService service) {
+    // Inject ProductService via constructor
+    public ProductControllerTest(ProductService service) {
         this.service = service;
     }
 
-    // ===================== Crear un producto =====================
+    // ===================== Create a new product =====================
+    /**
+     * Endpoint to create a new product.
+     * @param request ProductRequestDto containing product data
+     * @return Mono wrapped ApiResponse with created ProductResponseDto
+     */
     @PostMapping
     public Mono<ApiResponse<ProductResponseDto>> create(@RequestBody ProductRequestDto request) {
         return service.create(request)
                       .map(ApiResponse::success);
     }
 
-    // ================= Listar productos por sucursal con paginación =================
+    // ===================== List products by branch with pagination =====================
+    /**
+     * Endpoint to list all products of a specific branch with pagination.
+     * @param branchId ID of the branch
+     * @param page page number (default 0)
+     * @param size page size (default 10)
+     * @return Mono wrapped ApiResponse containing a PageResponse of ProductResponseDto
+     */
     @GetMapping("/branch/{branchId}")
     public Mono<ApiResponse<PageResponse<ProductResponseDto>>> findAll(
             @PathVariable Long branchId,
@@ -38,7 +50,13 @@ public class ProductController {
                       .map(ApiResponse::success);
     }
 
-    // ===================== Actualizar un producto =====================
+    // ===================== Update an existing product =====================
+    /**
+     * Endpoint to update an existing product by ID.
+     * @param id ID of the product to update
+     * @param request ProductRequestDto containing updated product data
+     * @return Mono wrapped ApiResponse with updated ProductResponseDto
+     */
     @PutMapping("/{id}")
     public Mono<ApiResponse<ProductResponseDto>> update(
             @PathVariable Long id,
@@ -48,19 +66,29 @@ public class ProductController {
                       .map(ApiResponse::success);
     }
 
-    // ===================== Eliminar un producto =====================
+    // ===================== Delete a product =====================
+    /**
+     * Endpoint to delete a product by ID.
+     * @param id ID of the product to delete
+     * @return Mono wrapped ApiResponse with null data
+     */
     @DeleteMapping("/{id}")
     public Mono<ApiResponse<Void>> delete(@PathVariable Long id) {
         return service.delete(id)
                       .then(Mono.just(ApiResponse.success(null)));
     }
 
-    // ===================== Obtener productos con máximo stock por franquicia =====================
+    // ===================== Get products with maximum stock by franchise =====================
+    /**
+     * Endpoint to retrieve the products with the maximum stock per franchise.
+     * Wraps the Flux inside Mono<ApiResponse> to avoid WebFlux response conflicts.
+     * @param franchiseId ID of the franchise
+     * @return Mono wrapped ApiResponse containing Flux of ProductResponseDto
+     */
     @GetMapping("/franchise-max-stock")
     public Mono<ApiResponse<Flux<ProductResponseDto>>> findMaxStock(
             @RequestParam Long franchiseId
     ) {
-        // En WebFlux, conviene envolver un Flux dentro de Mono<ApiResponse> para evitar conflictos
         Flux<ProductResponseDto> productsFlux = service.findMaxStockByFranchise(franchiseId);
         return Mono.just(ApiResponse.success(productsFlux));
     }

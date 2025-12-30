@@ -4,7 +4,6 @@ spring:
     username: acc_user
     password: acc_password
 
-  # 🚫 Nunca crear/modificar tablas desde la app
   sql:
     init:
       mode: never

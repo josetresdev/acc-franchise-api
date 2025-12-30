@@ -1,3 +1,4 @@
+
 # acc-franchise-api
 
 API REST desarrollada con **Spring Boot** para la gestión de
@@ -154,6 +155,32 @@ Conexión JDBC:
 
 ------------------------------------------------------------------------
 
+## Colecciones de Postman
+
+Se incluyen archivos de Postman para facilitar pruebas y documentación
+de la API.
+
+### Ubicación de archivos
+
+```
+postman/
+│
+├── acc-franchise-api.postman_collection.json
+├── acc-franchise-api.postman_environment.json
+```
+
+> Nota: Mantener estos archivos en el repositorio permite reproducir 
+> fácilmente las pruebas en diferentes entornos.
+
+### Ejecución
+
+1. Abrir Postman.
+2. Importar `acc-franchise-api.postman_collection.json` desde `postman/`.
+3. Importar `acc-franchise-api.postman_environment.json` para variables de entorno.
+4. Seleccionar el entorno correspondiente y ejecutar los endpoints.
+
+------------------------------------------------------------------------
+
 ## Endpoint disponible
 
 ### Health Check
@@ -296,6 +323,4 @@ Ejemplo:
 
 ## Autor
 
-**Jose Trespalacios B.**\
-Backend / Full Stack Developer\
-https://josetrespalaciosbedoya.co
+**Jose Trespalacios B.**Backend / Full Stack Developerhttps://josetrespalaciosbedoya.co

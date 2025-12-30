@@ -13,10 +13,22 @@ public class HealthController {
 
     private final HealthService healthService;
 
+    /**
+     * Constructor injection for HealthService.
+     *
+     * @param healthService instance of HealthService
+     */
     public HealthController(HealthService healthService) {
         this.healthService = healthService;
     }
 
+    // ===================== Health Check Endpoint =====================
+    /**
+     * Endpoint to check the health status of the API.
+     * Returns a reactive Mono containing HealthResponseDto with service status.
+     *
+     * @return Mono<HealthResponseDto> indicating API health and service name
+     */
     @GetMapping
     public Mono<HealthResponseDto> healthCheck() {
         return healthService.checkHealth();

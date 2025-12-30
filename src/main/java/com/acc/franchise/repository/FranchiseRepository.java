@@ -11,7 +11,11 @@ import reactor.core.publisher.Mono;
 public interface FranchiseRepository extends ReactiveCrudRepository<Franchise, Long> {
 
     /**
-     * Cuenta las franquicias activas con un nombre específico (para evitar duplicados)
+     * Counts active franchises with a specific name to prevent duplicates.
+     * Only considers records that are not soft-deleted (deleted_at IS NULL).
+     *
+     * @param name the franchise name to check
+     * @return Mono containing the count of matching franchises
      */
     @Query("""
         SELECT COUNT(*) 
@@ -22,7 +26,12 @@ public interface FranchiseRepository extends ReactiveCrudRepository<Franchise, L
     Mono<Integer> countByNameAndNotDeleted(String name);
 
     /**
-     * Obtiene un listado de franquicias activas paginadas
+     * Retrieves a paginated list of active franchises.
+     * Only considers records that are not soft-deleted (deleted_at IS NULL).
+     *
+     * @param limit  maximum number of records to return
+     * @param offset offset for pagination
+     * @return Flux stream of Franchise entities
      */
     @Query("""
         SELECT *
@@ -34,9 +43,9 @@ public interface FranchiseRepository extends ReactiveCrudRepository<Franchise, L
     Flux<Franchise> findAllPaged(int limit, long offset);
 
     /**
-     * Crear una franquicia (insert)
-     * ReactiveCrudRepository ya provee: save(Franchise)
-     * Ejemplo de uso en Service:
-     *    repository.save(Franchise.create("nombre"))
+     * Create a new franchise (insert).
+     * Note: ReactiveCrudRepository already provides the save(Franchise) method.
+     * Example usage in Service:
+     *    repository.save(Franchise.create("name"))
      */
 }

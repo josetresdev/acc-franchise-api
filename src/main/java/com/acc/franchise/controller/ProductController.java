@@ -15,10 +15,24 @@ public class ProductController {
 
     private final ProductService service;
 
+    /**
+     * Constructor injection for ProductService.
+     *
+     * @param service ProductService instance
+     */
     public ProductController(ProductService service) {
         this.service = service;
     }
 
+    // ===================== Create a new product =====================
+    /**
+     * Endpoint to create a new product.
+     * Uses @Valid to enforce validation rules defined in ProductRequestDto.
+     * Handles errors gracefully and returns a standardized ApiResponse.
+     *
+     * @param request ProductRequestDto containing product information
+     * @return Mono<ApiResponse<ProductResponseDto>> with success or error message
+     */
     @PostMapping
     public Mono<ApiResponse<ProductResponseDto>> create(@RequestBody @Valid ProductRequestDto request) {
         return service.create(request)
@@ -26,6 +40,16 @@ public class ProductController {
                 .onErrorResume(ex -> Mono.just(ApiResponse.error(ex.getMessage())));
     }
 
+    // ===================== List products by branch with pagination =====================
+    /**
+     * Endpoint to retrieve a paginated list of products for a specific branch.
+     * Handles errors gracefully and returns a standardized ApiResponse.
+     *
+     * @param branchId ID of the branch to retrieve products from
+     * @param page     page number (default 0)
+     * @param size     page size (default 10)
+     * @return Mono<ApiResponse<PageResponse<ProductResponseDto>>> with success or error
+     */
     @GetMapping
     public Mono<ApiResponse<PageResponse<ProductResponseDto>>> findAll(
             @RequestParam Long branchId,

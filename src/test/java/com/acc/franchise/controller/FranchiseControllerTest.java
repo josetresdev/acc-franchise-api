@@ -29,7 +29,7 @@ class FranchiseControllerTest {
         // given
         FranchiseRequestDto request = new FranchiseRequestDto("McDonalds");
 
-        Long id = 1L; // ID numérico autoincrement
+        Long id = 1L;
         FranchiseResponseDto response = new FranchiseResponseDto(id, "McDonalds");
 
         when(franchiseService.create(any()))
@@ -47,7 +47,7 @@ class FranchiseControllerTest {
                 .expectBody()
                 .jsonPath("$.success").isEqualTo(true)
                 .jsonPath("$.message").isEqualTo("Franchise created successfully")
-                .jsonPath("$.data.id").isEqualTo(id.intValue()) // WebTestClient interpreta números JSON como int
+                .jsonPath("$.data.id").isEqualTo(id.intValue())
                 .jsonPath("$.data.name").isEqualTo("McDonalds");
     }
 }
